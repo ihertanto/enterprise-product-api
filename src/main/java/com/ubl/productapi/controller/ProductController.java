@@ -2,7 +2,9 @@ package com.ubl.productapi.controller;
 
 import com.ubl.productapi.dto.*;
 import com.ubl.productapi.mapper.ProductMapper;
+import com.ubl.productapi.model.Category;
 import com.ubl.productapi.model.Product;
+import com.ubl.productapi.service.CategoryService;
 import com.ubl.productapi.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
@@ -16,11 +18,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService service;
+    private final CategoryService categoryService;
     private final ProductMapper mapper;
 
-    public ProductController(ProductService service, ProductMapper mapper) {
-    	this.service = service;
-		this.mapper = mapper;
+    public ProductController(ProductService service, ProductMapper mapper, CategoryService categoryService) {
+        this.service = service;
+		this.categoryService = categoryService;
+        this.mapper = mapper;
     }
 
     @GetMapping
@@ -36,14 +40,20 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@Valid @RequestBody ProductRequestDTO dto){
-        Product saved = service.create(mapper.toEntity(dto));
+        Category category = categoryService.findById(dto.getCategoryId());        
+    	Product toSave = mapper.toEntity(dto);
+    	toSave.setCategory(category);
+        Product saved = service.create(toSave);
         ProductResponseDTO resp = mapper.toResponseDTO(saved);
         return ResponseEntity.created(URI.create("/api/products/" + resp.getId())).body(resp);
     }
 
     @PutMapping("/{id}")
     public ProductResponseDTO update(@PathVariable("id") Long id, @Valid @RequestBody ProductRequestDTO dto){
-        Product updated = service.update(id, mapper.toEntity(dto));
+    	Category category = categoryService.findById(dto.getCategoryId());
+        Product toUpdate = mapper.toEntity(dto);
+        toUpdate.setCategory(category);
+        Product updated = service.update(id, toUpdate);
         return mapper.toResponseDTO(updated);
     }
 

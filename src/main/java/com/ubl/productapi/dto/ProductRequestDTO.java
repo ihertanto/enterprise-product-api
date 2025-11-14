@@ -18,5 +18,5 @@ public class ProductRequestDTO {
     @Min(value = 0, message = "stock cannot be negative")
     private int stock;
 
-    private String category;
+    private Long categoryId;
 }

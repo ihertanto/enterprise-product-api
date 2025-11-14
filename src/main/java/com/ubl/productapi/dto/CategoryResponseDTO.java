@@ -6,10 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductResponseDTO {
+public class CategoryResponseDTO {
     private Long id;
     private String name;
-    private double price;
-    private int stock;
-    private CategoryResponseDTO category;
 }

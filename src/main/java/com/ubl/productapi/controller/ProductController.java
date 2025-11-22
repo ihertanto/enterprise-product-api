@@ -7,6 +7,8 @@ import com.ubl.productapi.model.Product;
 import com.ubl.productapi.service.CategoryService;
 import com.ubl.productapi.service.ProductService;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,4 +64,20 @@ public class ProductController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+    
+	// ========================================================================
+	// SEARCH ENDPOINT (Dynamic Filter + Pagination + Sorting)
+	// ========================================================================
+	@GetMapping("/search")
+	public Page<ProductResponseDTO> searchProducts(
+			@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "categoryName", required = false) String categoryName,
+			@RequestParam(name = "minPrice", required = false) Double minPrice,
+			@RequestParam(name = "maxPrice", required = false) Double maxPrice,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size,
+			@RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
+			@RequestParam(name = "direction", defaultValue = "asc") String direction) {
+		return service.search(keyword, categoryName, minPrice, maxPrice, page, size, sortBy, direction);
+	}
 }

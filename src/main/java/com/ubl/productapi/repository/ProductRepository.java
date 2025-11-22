@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import jakarta.persistence.LockModeType;
 
 import java.util.List;
 import java.util.Optional;
@@ -73,4 +74,12 @@ public interface ProductRepository
     List<Product> findByCategory_Id(Long categoryId);
 
     Page<Product> findByCategory_Id(Long categoryId, Pageable pageable);
+
+    // ============================================================
+    // 8. PESSIMISTIC LOCK FOR UPDATE
+    // Returns product with a PESSIMISTIC_WRITE lock for transactional updates
+    // ============================================================
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Product p WHERE p.id = :id")
+    Optional<Product> findForUpdate(@Param("id") Long id);
 }

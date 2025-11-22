@@ -35,6 +35,9 @@ public class Product {
 
     private int stock;
 
+    @Version
+    private Long version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @JsonBackReference
